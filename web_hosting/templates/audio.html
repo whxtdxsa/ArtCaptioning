@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>음성 파일 재생</title>
+</head>
+<body>
+    <h1>업로드된 이미지와 도출된 문장</h1>
+    <img src="{{ image_url }}" alt="Uploaded Image" style="max-width: 500px;">
+    <p>도출된 문장: {{ sentence }}</p>
+    <h1>음성 파일 재생</h1>
+    <audio controls>
+        <source src="{{ audio_file }}" type="audio/mpeg">
+        브라우저가 오디오 태그를 지원하지 않습니다.
+    </audio>
+    <br>
+    <a href="{{ audio_file }}" download>음성 파일 다운로드</a>
+</body>
+</html>
