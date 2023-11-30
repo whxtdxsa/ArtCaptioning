@@ -1,2 +1,8 @@
 # 데이터셋 무시
 train2017.zip
+train2017
+__pycache__
+annotations_trainval2017.zip
+annotations
+dataset
+models
