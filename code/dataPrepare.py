@@ -7,10 +7,10 @@ from collections import Counter
 from multiprocessing import Pool
 from vocabulary import Vocabulary
 
-num_train_img = 1000
-num_val_img = 300
-num_test_img = 200
-word_threshold = 4
+num_train_img = 30000
+num_val_img = 4000
+num_test_img = 4000
+word_threshold = 7
 
 nltk.download('punkt')
 
