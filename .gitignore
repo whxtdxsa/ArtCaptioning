@@ -6,3 +6,8 @@ annotations_trainval2017.zip
 annotations
 dataset
 models
+vocab.pkl
+decoder-5-0.ckpt
+encoder-5-0.ckpt
+audio
+uploads

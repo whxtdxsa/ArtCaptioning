@@ -1,55 +1,74 @@
 import torch
-import torch.nn as nn
-import torchvision.models as models
-from torch.nn.utils.rnn import pack_padded_sequence
+from torchvision import transforms
+from PIL import Image
+import vocabulary 
+import pickle
+import final_model.resnetLstm as model
+import os
 
-class EncoderCNN(nn.Module):
-    def __init__(self, embed_size):
-        # 사전 학습된(pre-trained) ResNet-101을 불러와 FC 레이어를 교체
-        super(EncoderCNN, self).__init__()
-        transfer_model = models.resnet101(pretrained=True)
-        modules = list(transfer_model.children())[:-1] # 마지막 FC 레이어를 제거
-        self.transfer_model = nn.Sequential(*modules)
-        self.embed = nn.Linear(transfer_model.fc.in_features, embed_size) # 결과(output) 차원을 임베딩 차원으로 변경
-        self.batch_norm = nn.BatchNorm1d(embed_size, momentum=0.01)
+# 모델 파라미터 설정
+embed_size = 256
+hidden_size = 1024
+num_layers = 1
+vocab_path = "./final_model/vocab.pkl"  # Path to the preprocessed vocabulary file
 
-    def forward(self, images):
-        # 입력 이미지에서 특징 벡터(feature vectors)
-        with torch.no_grad(): # 네트워크의 앞 부분은 변경되지 않도록 하기
-            features = self.transfer_model(images)
-        features = features.reshape(features.size(0), -1)
-        features = self.batch_norm(self.embed(features))
-        return features
+# Load vocabulary file
+with open(vocab_path, 'rb') as f:
+    vocab = pickle.load(f)
+
+# 파일 관리를 위한 함수
+def manage_files(directory, max_files):
+    files = os.listdir(directory)
+    while len(files) > max_files:
+        full_paths = [os.path.join(directory, file) for file in files]
+        oldest_file = min(full_paths, key=os.path.getctime)
+        os.remove(oldest_file)
 
 
-class DecoderRNN(nn.Module):
-    def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_seq_length=20):
-        # 하이퍼 파라미터(hyper-parameters) 설정 및 레이어 생성
-        super(DecoderRNN, self).__init__()
-        self.embed = nn.Embedding(vocab_size, embed_size)
-        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
-        self.linear = nn.Linear(hidden_size, vocab_size)
-        self.max_seg_length = max_seq_length
+def load_model(encoder_path, decoder_path, embed_size=embed_size, hidden_size=hidden_size, vocab_size=len(vocab), num_layers=num_layers):
+    # 모델 초기화 및 가중치 로드
+    encoder = model.EncoderCNN(embed_size)
+    decoder = model.DecoderRNN(embed_size, hidden_size, vocab_size, num_layers)
 
-    def forward(self, features, captions, lengths):
-        # 이미지 특징 벡터(feature vectors)로부터 캡션(caption) 생성
-        embeddings = self.embed(captions)
-        embeddings = torch.cat((features.unsqueeze(1), embeddings), 1) # 이미지 특징과 임베딩 연결
-        packed = pack_padded_sequence(embeddings, lengths, batch_first=True) # 패딩을 넣어 차원 맞추기
-        hiddens, _ = self.lstm(packed) # 다음 hidden state 구하기
-        outputs = self.linear(hiddens[0])
-        return outputs
+    encoder.load_state_dict(torch.load(encoder_path))
+    decoder.load_state_dict(torch.load(decoder_path))
 
-    def sample(self, features, states=None):
-        # 간단히 그리디(greedy) 탐색으로 캡션(caption) 생성하기
-        sampled_indexes = []
-        inputs = features.unsqueeze(1)
-        for i in range(self.max_seg_length):
-            hiddens, states = self.lstm(inputs, states) # hiddens: (batch_size, 1, hidden_size)
-            outputs = self.linear(hiddens.squeeze(1)) # outputs: (batch_size, vocab_size)
-            _, predicted = outputs.max(1) # predicted: (batch_size)
-            sampled_indexes.append(predicted)
-            inputs = self.embed(predicted) # inputs: (batch_size, embed_size)
-            inputs = inputs.unsqueeze(1) # inputs: (batch_size, 1, embed_size)
-        sampled_indexes = torch.stack(sampled_indexes, 1) # sampled_indexes: (batch_size, max_seq_length)
-        return sampled_indexes
+    encoder.eval()
+    decoder.eval()
+
+    return encoder, decoder
+
+def generate_caption(image_path, encoder, decoder, vocab=vocab, max_length=20):
+    # 이미지 전처리
+    transform = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+    ])
+
+    image = Image.open(image_path).convert("RGB")
+    image = transform(image).unsqueeze(0)
+
+    # 디바이스 설정 (CPU or GPU)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    image = image.to(device)
+    encoder = encoder.to(device)
+    decoder = decoder.to(device)
+
+    # 특징 추출 및 캡션 생성
+    with torch.no_grad():
+        features = encoder(image)
+        sampled_ids = decoder.sample(features)
+        sampled_ids = sampled_ids[0].cpu().numpy()
+
+    # ID를 단어로 변환
+    caption = []
+    for word_id in sampled_ids:
+        word = vocab.idx2word[word_id]
+        caption.append(word)
+        if word == '<end>':
+            break
+
+    return ' '.join(caption[1:-1]).capitalize()
+

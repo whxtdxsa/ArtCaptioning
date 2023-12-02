@@ -10,7 +10,7 @@ from vocabulary import Vocabulary
 num_train_img = 30000
 num_val_img = 4000
 num_test_img = 4000
-word_threshold = 7
+word_threshold = 5
 
 nltk.download('punkt')
 
