@@ -7,7 +7,8 @@ annotations
 dataset
 models
 vocab.pkl
-decoder-5-0.ckpt
-encoder-5-0.ckpt
+decoder-5.ckpt
+encoder-5.ckpt
 audio
 uploads
+nohup.out
