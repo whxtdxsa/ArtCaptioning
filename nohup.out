@@ -1,0 +1,17 @@
+[I 21:20:22.970 NotebookApp] Serving notebooks from local directory: /home/whitdisa04/ArtCaptioning
+[I 21:20:22.970 NotebookApp] The Jupyter Notebook is running at:
+[I 21:20:22.970 NotebookApp] http://art-captioning:8888/?token=1e470a19c11d349fa9dc63331ee93bc65c4a98e567fe0fb0
+[I 21:20:22.970 NotebookApp]  or http://127.0.0.1:8888/?token=1e470a19c11d349fa9dc63331ee93bc65c4a98e567fe0fb0
+[I 21:20:22.971 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[C 21:20:22.974 NotebookApp] 
+    
+    To access the notebook, open this file in a browser:
+        file:///home/whitdisa04/.local/share/jupyter/runtime/nbserver-8955-open.html
+    Or copy and paste one of these URLs:
+        http://art-captioning:8888/?token=1e470a19c11d349fa9dc63331ee93bc65c4a98e567fe0fb0
+     or http://127.0.0.1:8888/?token=1e470a19c11d349fa9dc63331ee93bc65c4a98e567fe0fb0
+[I 21:20:32.176 NotebookApp] 302 GET / (127.0.0.1) 0.47ms
+[I 21:20:32.233 NotebookApp] 302 GET /tree? (127.0.0.1) 0.72ms
+[I 21:20:43.043 NotebookApp] 302 GET /?token=1e470a19c11d349fa9dc63331ee93bc65c4a98e567fe0fb0 (127.0.0.1) 0.86ms
+[I 21:20:57.652 NotebookApp] Uploading file to /art_captions.json
+[I 21:21:04.670 NotebookApp] Uploading file to /art_images.zip
