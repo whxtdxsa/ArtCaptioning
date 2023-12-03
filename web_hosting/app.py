@@ -27,7 +27,7 @@ def upload_file():
             file.save(image_path)
             model.manage_files(app.config['UPLOAD_FOLDER'], 5)  # 이미지 폴더 관리
             # 이미지 처리 및 문장 도출
-            encoder, decoder = model.load_model('./final_model/encoder-5-0.ckpt', './final_model/decoder-5-0.ckpt')
+            encoder, decoder = model.load_model('./final_model/encoder-5.ckpt', './final_model/decoder-5.ckpt')
             sentence = model.generate_caption(image_path, encoder, decoder)
 
             print("Caption:", sentence)
