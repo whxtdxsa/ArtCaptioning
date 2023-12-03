@@ -20,35 +20,47 @@ class ViTEncoder(nn.Module):
         features = features.mean(dim=1)
         features = self.linear(features)
         return features
-    from transformers import GPT2LMHeadModel, GPT2Config
 
 class GPT2Decoder(nn.Module):
-    def __init__(self, embed_size, vocab_size, gpt_model_name='gpt2'):
+    def __init__(self, embed_size, hidden_size, vocab_size, num_layers, gpt2_model_name='gpt2'):
         super(GPT2Decoder, self).__init__()
-        self.gpt = GPT2LMHeadModel.from_pretrained(gpt_model_name, pad_token_id=50256)
-        # ViT의 임베딩 크기와 GPT2의 임베딩 크기를 맞추는 레이어
-        self.linear = nn.Linear(embed_size, self.gpt.config.n_embd)
-        self.vocab_size = vocab_size
+        self.gpt2 = GPT2LMHeadModel.from_pretrained(gpt2_model_name)
 
-    def forward(self, features, captions=None, lengths=None):
-        features = self.linear(features)
-        # 이미지 특징을 GPT2의 첫 토큰으로 사용
-        input_ids = torch.cat([features.unsqueeze(1), captions[:, :-1]], dim=1)
-        outputs = self.gpt(input_ids, labels=captions)
-        return outputs.logits
+        # ViT의 출력을 GPT-2의 입력 크기에 맞게 조정하는 레이어
+        self.linear = nn.Linear(embed_size, self.gpt2.config.n_embd)
+        self.embed_size = embed_size
+
+    def forward(self, features, captions, lengths):
+        # 이미지 특징을 GPT-2 토큰 크기에 맞게 변환
+        transformed_features = self.linear(features).unsqueeze(1)  # (batch_size, 1, hidden_size)
+
+        # 캡션의 임베딩을 가져옴
+        embeddings = self.gpt2.transformer.wte(captions)  # (batch_size, max_length, hidden_size)
+
+        # 이미지 특징과 캡션 임베딩을 결합
+        inputs_embeds = torch.cat([transformed_features, embeddings], dim=1)  # (batch_size, max_length+1, hidden_size)
+
+        # 모델 출력 크기를 타겟 크기에 맞게 조정
+        outputs = self.gpt2(inputs_embeds=inputs_embeds).logits
+        packed_outputs = pack_padded_sequence(outputs, lengths, batch_first=True, enforce_sorted=False).data
+        return packed_outputs 
+
 
     def sample(self, features, max_length=20):
-        sampled_indexes = []
-        inputs = features.unsqueeze(1)  # 첫 번째 입력은 이미지 특징
-    
+        # 이미지 특징을 GPT-2 토큰 크기에 맞게 변환
+        transformed_features = self.linear(features).unsqueeze(1)  # (batch_size, 1, hidden_size)
+
+        generated = transformed_features
+        result_ids = []
+
         for i in range(max_length):
-            # Transformer 모델을 사용하여 출력 예측
-            outputs = self.forward(inputs)  # outputs: (batch_size, sequence_length, vocab_size)
-            _, predicted = outputs[:, -1, :].max(dim=1)  # 마지막 단어의 가장 높은 확률을 가진 단어 선택
-    
-            # 예측된 단어를 시퀀스에 추가
-            sampled_indexes.append(predicted.unsqueeze(1))
-            inputs = torch.cat((inputs, predicted.unsqueeze(1)), dim=1)  # 다음 입력을 위해 현재 단어 추가
-    
-        sampled_indexes = torch.cat(sampled_indexes, dim=1)  # sampled_indexes: (batch_size, max_seq_length)
-        return sampled_indexes
+            outputs = self.gpt2(inputs_embeds=generated)
+            logits = outputs.logits
+            next_token_logits = logits[:, -1, :]
+            next_token = torch.argmax(next_token_logits, dim=-1).unsqueeze(1)
+
+            result_ids.append(next_token)
+            next_token_embedding = self.gpt2.transformer.wte(next_token)
+            generated = torch.cat([generated, next_token_embedding], dim=1)
+
+        return torch.cat(result_ids, dim=1)

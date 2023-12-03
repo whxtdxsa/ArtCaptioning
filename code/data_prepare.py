@@ -7,8 +7,8 @@ from collections import Counter
 from multiprocessing import Pool
 from vocabulary import Vocabulary
 
-num_train_img = 32000
-num_val_img = 4000
+num_train_img = 8000
+num_val_img = 2000
 num_test_img = 2000
 word_threshold = 6
 
