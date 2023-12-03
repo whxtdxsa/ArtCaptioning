@@ -34,3 +34,19 @@ class LSTMDecoder(nn.Module):
         hiddens, _ = self.lstm(packed)
         outputs = self.linear(hiddens[0])
         return outputs
+
+    def sample(self, features, max_length=20):
+        sampled_indexes = []
+        inputs = features.unsqueeze(1)  # 첫 번째 입력은 이미지 특징
+    
+        for i in range(max_length):
+            # Transformer 모델을 사용하여 출력 예측
+            outputs = self.forward(inputs)  # outputs: (batch_size, sequence_length, vocab_size)
+            _, predicted = outputs[:, -1, :].max(dim=1)  # 마지막 단어의 가장 높은 확률을 가진 단어 선택
+    
+            # 예측된 단어를 시퀀스에 추가
+            sampled_indexes.append(predicted.unsqueeze(1))
+            inputs = torch.cat((inputs, predicted.unsqueeze(1)), dim=1)  # 다음 입력을 위해 현재 단어 추가
+    
+        sampled_indexes = torch.cat(sampled_indexes, dim=1)  # sampled_indexes: (batch_size, max_seq_length)
+        return sampled_indexes
