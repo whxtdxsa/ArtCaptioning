@@ -8,7 +8,7 @@ class CocoDataset(data.Dataset):
     def __init__(self, root, captions, vocab, transform=None):
         self.root = root  # 이미지가 위치한 디렉토리
         self.vocab = vocab  # 단어장 객체
-        self.transform = transform  # 이미지 변환 (옵션)
+        self.transform = transform  # 이미지 변환
 
         # 캡션 데이터 로드 및 처리
         with open(captions, "r") as f:
@@ -77,7 +77,6 @@ def collate_fn_test(data):
 
     return images, targets, lengths  # Return images, padded captions, and lengths as before
 
-# Function to get a data loader for custom Flickr8k dataset
 def get_loader(root, captions, vocab, transform, batch_size, shuffle, num_workers, testing, pin_memory=False):
     # CocoDataset 초기화
     coco_dataset = CocoDataset(root=root, captions=captions, vocab=vocab, transform=transform)

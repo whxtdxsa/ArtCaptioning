@@ -5,12 +5,12 @@ import torch
 import torch.utils.data as data
 
 class CocoDataset(data.Dataset):
-    def __init__(self, root, captions, vocab, transform=None):
-        self.root = root  # 이미지가 위치한 디렉토리
-        self.vocab = vocab  # 단어장 객체
-        self.transform = transform  # 이미지 변환 (옵션)
+    def __init__(self, root, augmented_root, captions, vocab, transform=None):
+        self.root = root
+        self.augmented_root = augmented_root
+        self.vocab = vocab
+        self.transform = transform
 
-        # 캡션 데이터 로드 및 처리
         with open(captions, "r") as f:
             lines = f.readlines()
             self.captions = []
@@ -18,11 +18,15 @@ class CocoDataset(data.Dataset):
                 index = line.find(",")
                 path = line[:index]
                 caption = line[index + 1:]
-                self.captions.append((path.strip(), caption.strip()))
+                # 원본 이미지 캡션 추가
+                self.captions.append((os.path.join(root, path.strip()), caption.strip()))
+                if augmented_root != "none":
+                    # 블러 처리된 이미지 캡션 추가
+                    self.captions.append((os.path.join(augmented_root, path.strip()), caption.strip()))
 
     def __getitem__(self, index):
-        path, caption = self.captions[index]
-        image = Image.open(os.path.join(self.root, path)).convert('RGB')
+        image_path, caption = self.captions[index]
+        image = Image.open(image_path).convert('RGB')
 
         if self.transform is not None:
             image = self.transform(image)
@@ -77,10 +81,8 @@ def collate_fn_test(data):
 
     return images, targets, lengths  # Return images, padded captions, and lengths as before
 
-# Function to get a data loader for custom Flickr8k dataset
-def get_loader(root, captions, vocab, transform, batch_size, shuffle, num_workers, testing, pin_memory=False):
-    # CocoDataset 초기화
-    coco_dataset = CocoDataset(root=root, captions=captions, vocab=vocab, transform=transform)
+def get_loader(root, augmented_root, captions, vocab, transform, batch_size, shuffle, num_workers, testing, pin_memory=False):
+    coco_dataset = CocoDataset(root=root, augmented_root=augmented_root, captions=captions, vocab=vocab, transform=transform)
 
     # 테스트 중인지에 따라 적절한 collate 함수 선택
     collate_fn_to_use = collate_fn_test if testing else collate_fn

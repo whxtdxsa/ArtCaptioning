@@ -3,9 +3,9 @@ import torch.nn as nn
 from transformers import ViTModel, ViTConfig
 from torch.nn.utils.rnn import pack_padded_sequence
 
-class ViTEncoder(nn.Module):
+class Encoder(nn.Module): # ViT Encoder
     def __init__(self, embed_size):
-        super(ViTEncoder, self).__init__()
+        super(Encoder, self).__init__()
         # ViT 모델 로드
         self.vit = ViTModel.from_pretrained('google/vit-base-patch16-224-in21k')
         # 임베딩 차원 조정을 위한 추가 레이어
@@ -20,9 +20,9 @@ class ViTEncoder(nn.Module):
         features = self.linear(features)
         return features
     
-class LSTMDecoder(nn.Module):
+class Decoder(nn.Module): # LSTM Decoder
     def __init__(self, embed_size, hidden_size, vocab_size, num_layers):
-        super(LSTMDecoder, self).__init__()
+        super(Decoder, self).__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)

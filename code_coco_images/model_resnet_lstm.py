@@ -3,10 +3,10 @@ import torch.nn as nn
 import torchvision.models as models
 from torch.nn.utils.rnn import pack_padded_sequence
 
-class EncoderCNN(nn.Module):
+class Encoder(nn.Module): # Resnet101 Encoder
     def __init__(self, embed_size):
         # 사전 학습된(pre-trained) ResNet-101을 불러와 FC 레이어를 교체
-        super(EncoderCNN, self).__init__()
+        super(Encoder, self).__init__()
         transfer_model = models.resnet101(pretrained=True)
         modules = list(transfer_model.children())[:-1] # 마지막 FC 레이어를 제거
         self.transfer_model = nn.Sequential(*modules)
@@ -21,10 +21,10 @@ class EncoderCNN(nn.Module):
         features = self.batch_norm(self.embed(features))
         return features
 
-class DecoderRNN(nn.Module):
+class Decoder(nn.Module): # LSTM Decoder
     def __init__(self, embed_size, hidden_size, vocab_size, num_layers, max_seq_length=20):
         # 하이퍼 파라미터(hyper-parameters) 설정 및 레이어 생성
-        super(DecoderRNN, self).__init__()
+        super(Decoder, self).__init__()
         self.embed = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(embed_size, hidden_size, num_layers, batch_first=True)
         self.linear = nn.Linear(hidden_size, vocab_size)

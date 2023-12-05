@@ -4,9 +4,9 @@ from transformers import ViTModel, ViTConfig
 from torch.nn.utils.rnn import pack_padded_sequence
 from transformers import GPT2LMHeadModel, GPT2Config
 
-class ViTEncoder(nn.Module):
+class Encoder(nn.Module): # ViT Encoder
     def __init__(self, embed_size, dropout_rate=0.1):
-        super(ViTEncoder, self).__init__()
+        super(Encoder, self).__init__()
         self.vit = ViTModel.from_pretrained('google/vit-base-patch16-224-in21k')
         self.linear = nn.Linear(self.vit.config.hidden_size, embed_size)
         self.dropout = nn.Dropout(dropout_rate)
@@ -18,9 +18,9 @@ class ViTEncoder(nn.Module):
         features = self.dropout(self.linear(features))
         return features
 
-class GPT2Decoder(nn.Module):
+class Decoder(nn.Module): # GPT-2 Decoder
     def __init__(self, embed_size, hidden_size, vocab_size, num_layers, dropout_rate=0.1, gpt2_model_name='gpt2-medium'):
-        super(GPT2Decoder, self).__init__()
+        super(Decoder, self).__init__()
         self.gpt2 = GPT2LMHeadModel.from_pretrained(gpt2_model_name)
         self.linear = nn.Linear(embed_size, self.gpt2.config.n_embd)
         self.dropout = nn.Dropout(dropout_rate)
