@@ -68,5 +68,8 @@ Evaluating the performance of our AI models was a critical component of the ArtC
 - **Vision Transformer (ViT)**: Dosovitskiy, A., et al. (2020). An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale. [Link to Paper](https://arxiv.org/abs/2010.11929).
 - **GPT-2**: Radford, A., et al. (2019). Language Models are Unsupervised Multitask Learners. [Link to Paper](https://openai.com/blog/better-language-models/).
 
-### Acknowledgments
-- **Project Team**: Special thanks to the entire project team for their relentless efforts and innovative contributions.
+### Collaborators
+A special thanks to our collaborators who played a pivotal role in the development and success of the ArtCaptioning project. Their expertise, commitment, and innovative ideas were invaluable in bringing this project to fruition.
+[Kimsangwon-0523]
+[tilleyshen]
+[supernova236]
