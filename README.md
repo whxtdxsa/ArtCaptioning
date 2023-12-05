@@ -70,6 +70,6 @@ Evaluating the performance of our AI models was a critical component of the ArtC
 
 ### Collaborators
 A special thanks to our collaborators who played a pivotal role in the development and success of the ArtCaptioning project. Their expertise, commitment, and innovative ideas were invaluable in bringing this project to fruition.
-[Kimsangwon-0523]
-[tilleyshen]
-[supernova236]
+- [Kimsangwon-0523](https://github.com/Kimsangwon-0523)
+- [tilleyshen](https://github.com/tilleyshen)
+- [supernova236](https://github.com/supernova236)
