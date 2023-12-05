@@ -67,11 +67,11 @@ Evaluating the performance of our AI models was a critical component of the ArtC
 - **Flickr8k Dataset**: Details about this dataset can be found at [Flickr8k Dataset Resource](https://example-link-to-flickr8k-dataset.com).
 - **COCO Dataset**: More information on the COCO dataset is available at [COCO Dataset Official Website](https://cocodataset.org/).
 
-### Model and Technology References
-- **ResNet**: He, K., Zhang, X., Ren, S., & Sun, J. (2016). Deep Residual Learning for Image Recognition. [Link to Paper](https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html).
-- **LSTM**: Hochreiter, S., & Schmidhuber, J. (1997). Long Short-Term Memory. Neural Computation, 9(8), 1735-1780. [Link to Paper](https://www.mitpressjournals.org/doi/abs/10.1162/neco.1997.9.8.1735).
-- **Vision Transformer (ViT)**: Dosovitskiy, A., et al. (2020). An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale. [Link to Paper](https://arxiv.org/abs/2010.11929).
-- **GPT-2**: Radford, A., et al. (2019). Language Models are Unsupervised Multitask Learners. [Link to Paper](https://openai.com/blog/better-language-models/).
+### Referenced Papers
+- **Understanding Deep Image Representations by Inverting Them**: Mahendran, A., & Vedaldi, A. (2014). [Link to Paper](https://arxiv.org/abs/1411.4555).
+- **ViT-GPT2 Image Captioning**: An exploration of using Vision Transformer (ViT) and GPT-2 for image captioning. [Link to Project Page](https://huggingface.co/nlpconnect/vit-gpt2-image-captioning).
+- **Data Augmentation for Image Captioning**: [2106.05437] Data augmentation to improve robustness of image captioning solutions. [Link to Paper](https://arxiv.org/abs/2106.05437).
+- **ArtCap: A Dataset for Image Captioning of Fine Art Paintings**: This paper discusses a specialized dataset for image captioning in the context of fine art. [Link to IEEE Xplore](https://ieeexplore.ieee.org/abstract/document/9965360).
 
 ### Collaborators
 A special thanks to our collaborators who played a pivotal role in the development and success of the ArtCaptioning project. Their expertise, commitment, and innovative ideas were invaluable in bringing this project to fruition.
