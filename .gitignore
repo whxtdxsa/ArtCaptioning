@@ -1,16 +1,14 @@
-# 데이터셋 무시
-train2017.zip
-train2017
 __pycache__
-annotations_trainval2017.zip
-annotations
+augmented
 dataset
+images
 models
-vocab.pkl
-decoder-5.ckpt
-encoder-5.ckpt
+predata
+ArtCap.json
+annotations
+train2017
 audio
 uploads
-nohup.out
-ArtCap.json
-images
+# art-decoder.ckpt
+# art-encoder.ckpt
+vocab.pkl

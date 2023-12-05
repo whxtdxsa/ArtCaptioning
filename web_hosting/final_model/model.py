@@ -3,7 +3,7 @@ from torchvision import transforms
 from PIL import Image
 import vocabulary 
 import pickle
-import final_model.model_transformer_transformer as model
+import final_model.model_vit_gpt2 as model
 import os
 
 # 모델 파라미터 설정
@@ -27,8 +27,8 @@ def manage_files(directory, max_files):
 
 def load_model(encoder_path, decoder_path, embed_size=embed_size, hidden_size=hidden_size, vocab_size=len(vocab), num_layers=num_layers):
     # 모델 초기화 및 가중치 로드
-    encoder = model.ViTEncoder(embed_size)
-    decoder = model.GPT2Decoder(embed_size, hidden_size, vocab_size, num_layers)
+    encoder = model.Encoder(embed_size)
+    decoder = model.Decoder(embed_size, hidden_size, vocab_size, num_layers)
 
     encoder.load_state_dict(torch.load(encoder_path))
     decoder.load_state_dict(torch.load(decoder_path))
