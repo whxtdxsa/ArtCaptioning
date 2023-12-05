@@ -50,7 +50,7 @@ Evaluating the performance of our AI models was a critical component of the ArtC
 - **Image Interpretation Accuracy**: We used standard image recognition metrics such as Precision, Recall, and F1-Score to evaluate the accuracy of the image interpretation component of our models. These metrics helped us assess how effectively the model identified and understood the key elements and themes in the artworks.
 - **Caption Quality Assessment**: For the language generation aspect, we employed BLEU (Bilingual Evaluation Understudy) scores to measure the linguistic quality of the generated captions. BLEU scores are widely used in machine translation and text generation to evaluate the similarity between machine-generated text and reference (human-written) text.
 <p align="center">
-    <img src="images/model_result.png" width="600">
+    <img src="images/model_result.png" width="800">
 </p>
 
 ### Comparative Analysis
